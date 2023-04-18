@@ -16,36 +16,33 @@ const map = new ol.Map({
 }) 
 
 // Geojson ----------------------------------------------------------------
-
 //REF : 
-/*  {
-    'UUDI' : 'XX',                  UUID of the feature
-    'Style' : {
-      'Scale' : 1,                  Scale                  
-      'StyleFeature' : 1,           Style of the Feature
-      'StyleText' : 1               Style of the texte        
-      },
-    'Attributes' : {
-      'title' : 'title 1',          The Title texte
-      'info' : 'information'        on select display texte
-    },
-    'features' : {                  GeoJSON
-      'type': 'Feature',
-      'geometry': {
-        'type': 'Polygon',
-        'coordinates': [
-          [
-            [10, 10],
-            [10, 20],
-            [30, 20],
-            [30, 10],
-          ],
-        ],
+/*  
+  1 : {
+    Polygon_A : [
+      {
+        'UUDI' : 'XX',
+        'Attributes' : {
+          'title' : 'title 1',
+          'info' : 'information'
+        },
+        'features' : {
+          'type': 'Feature',
+          'geometry': {
+            'type': 'Polygon',
+            'coordinates': [
+              [
+                [10, 10],
+                [10, 20],
+                [30, 20],
+                [30, 10],
+              ],
+            ],
+          }
+        }
       }
-    }
-  },
-  */
-
+    ],
+*/
 
 // Geojson - workflow data management--------------------------------------
 
@@ -121,8 +118,8 @@ const stylesHidden = {
 };
 
 
-const styleFunction = function (name, curentZoom, maxZoom) {
-  if (curentZoom < maxZoom){
+const styleFunction = function (name, curentZoom, hidden) {
+  if (curentZoom < hidden){
     return stylesActive[name];
   }
   return stylesHidden[name];
@@ -181,12 +178,12 @@ const Scale = {
   1 : {
     hidden : 9999,
     maxZoom : 9999, 
-    minZoom : 17,
+    minZoom : 18,
   },
   2 : {
-    hidden : 19,
+    hidden : 20,
     maxZoom : 9999, 
-    minZoom : 14,
+    minZoom : 15,
   }, 
   3 : {
     hidden : 17,
@@ -359,7 +356,6 @@ var layers = Data2Layer({...Scale}, workflowItem)
 
 for (layer of layers) {
   map.addLayer(layer[0]);
-  console.log(layer[1], 'set')
 }
 
 const graticule = new ol.layer.Graticule({
@@ -376,12 +372,15 @@ map.addLayer(graticule);
 
 
 map.getView().on('change:resolution', (event) => {
-  layers[0][0].setStyle(function(feature, resolution) {
-    return styleFunction(layers[0][1].typeFeature, map.getView().getZoom(),layers[0][1].hidden);
-  },
-)}
-);
-
+  console.log(map.getView().getZoom())
+  for(layer of layers){
+    let hiddenLayer = layer[1].hidden
+    let typeFeatureLayer = layer[1].typeFeature
+    layer[0].setStyle(function(feature, resolution) {
+      return styleFunction(typeFeatureLayer, map.getView().getZoom(),hiddenLayer);
+    }, 
+  )}
+});
 
 //HTML Content functions
 function openPopup() {
@@ -394,7 +393,7 @@ function closePopup() {
   document.getElementById("popup").style.display = "none";
 }
 
-//HTML Content functions Draw
+//Draw Workflow
 function DrawStart() {
   document.getElementById("control").style.display = "none";
   document.getElementById("overlay").style.display = "block";
@@ -406,4 +405,18 @@ function DrawEnd() {
   document.getElementById("overlay").style.display = "none";
   document.getElementById("popupDraw").style.display = "none";
 }
+
+//Edit Workflow
+function EditStart() {
+  document.getElementById("control").style.display = "none";
+  document.getElementById("overlay").style.display = "block";
+  document.getElementById("popupEdit").style.display = "block";
+}
+
+function EditEnd() {
+  document.getElementById("control").style.display = "block";
+  document.getElementById("overlay").style.display = "none";
+  document.getElementById("popupEdit").style.display = "none";
+}
+
 
