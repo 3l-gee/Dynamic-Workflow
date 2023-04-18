@@ -20,27 +20,61 @@
       <h3>Workflow_</h3>
       <button class="button" onclick="DrawStart()">Draw</button>
       <button class="button" onclick="ViewStart()">View</button>
-      <button class="button" onclick="openPopup()">Edit</button>
+      <button class="button" onclick="EditStart()">Edit</button>
       <button class="button" onclick="test()">Play</button>
       <button class="button" onclick="openPopup()">Transfert</button>
       <div class="overlay" id="overlay"></div>
     </div>
 
+    <!--Draw Div-->
     <div class="popupDraw" id="popupDraw">
       <div class="content">
-        <h3>Draw Workflow</h3>
+        <h3>_Draw Workflow_</h3>
         <p>Actions or Connections</p>
         <form>
-          <input type="radio" id="html" name="fav_language" value="HTML">
-          <label for="html">Actions</label><br>
-          <input type="radio" id="css" name="fav_language" value="CSS">
+          <input type="radio" id="option1" name="options" onclick="DrawActions()">
+          <label for="option1">Actions</label><br>
+          <input type="radio" id="option2" name="options" onclick="DrawConnections()">
           <label for="css">Connections</label><br>
+        </form>
+        <form action="/action_page.php">
+          <select name="cars" id="cars">
+            <option value="Def"></option>
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+          </select>
+          <label for="cars">Scale</label>
+        </form>
+        <form action="/action_page.php">
+          <select name="cars" id="cars">
+            <option value="Def"></option>
+            <option value="A">Start Point</option>
+            <option value="B">Decision point</option>
+            <option value="C">End Point</option>
+          </select>
+          <label for="cars">Type</label>
+          <br><br>
+          <input type="submit" value="Submit">
         </form>
       </div>
       <div class="windowButtonDiv">
         <button class="windowButtonSave" onclick="DrawEnd()">Save</button>
         <button class="windowButton" onclick="DrawEnd()">Edit</button>
         <button class="windowButtonExit" onclick="DrawEnd()">Exit</button>
+      </div>  
+    </div>
+
+    <div class="popupEdit" id="popupEdit">
+      <div class="content">
+        <h3>_Edit</h3>
+        <h3>Workflow_</h3>
+        <p>Test, this does things</p>
+      </div>
+      <div class="windowButtonDiv">
+        <button class="windowButtonSave" onclick="EditEnd()">Save</button>
+        <button class="windowButton" onclick="EditEnd()">Edit</button>
+        <button class="windowButtonExit" onclick="EditEnd()">Exit</button>
       </div>  
     </div>
 
