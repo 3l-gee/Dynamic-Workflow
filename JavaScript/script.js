@@ -62,35 +62,90 @@ function generateUUID() { // Public Domain/MIT
   });
 }
 
+
+const TextStyleActive = {
+  'Polygone_A' : new ol.style.Style({
+    text: new ol.style.Text({
+      text: 'Steve',
+      font : `12px Arial`,
+      textBaseline : 'middle',
+      textAlign : 'center',
+      stroke: new ol.style.Stroke({
+        color: 'white',
+      }),
+      fill: new ol.style.Fill({
+        color: 'white'
+      }),
+    })
+  }),
+  'Polygone_B' : new ol.style.Style({
+    text: new ol.style.Text({
+      text: 'Steve',
+      font : `12px Arial`,
+      textBaseline : 'middle',
+      textAlign : 'center',
+      stroke: new ol.style.Stroke({
+        color: 'white',
+      }),
+      fill: new ol.style.Fill({
+        color: 'white'
+      }),
+    })
+  }),
+  'Polygone_C' : new ol.style.Style({
+    text: new ol.style.Text({
+      text: 'Steve',
+      font : `12px Arial`,
+      textBaseline : 'middle',
+      textAlign : 'center',
+      stroke: new ol.style.Stroke({
+        color: 'white',
+      }),
+      fill: new ol.style.Fill({
+        color: 'white'
+      }),
+    })
+  })
+}
+
+
 // styles 
-const stylesActive = {
+const FeatureStylesActive = {
   'Polygon_A': new ol.style.Style({
     stroke: new ol.style.Stroke({
       color: 'white',
       lineDash: null,
       width: 2,
-      fill: null,
-    })
+    }),
+    fill: new ol.style.Fill({
+      color: 'rgba(0, 255, 0, 0.05)',
+    }), 
   }),
   'Polygon_B': new ol.style.Style({
     stroke: new ol.style.Stroke({
-      color: 'red',
+      color: 'white',
       lineDash: null,
       width: 2,
       fill: null,
-    })
+    }),
+    fill: new ol.style.Fill({
+      color: 'rgba(255, 255, 255, 0.05)',
+    }),
   }),
   'Polygon_C': new ol.style.Style({
     stroke: new ol.style.Stroke({
-      color: 'blue',
+      color: 'white',
       lineDash: null,
       width: 2,
       fill: null,
-    })
+    }),
+    fill: new ol.style.Fill({
+      color: 'rgba(0, 0, 0, 0.05)',
+    }),
   })
 };
 
-const stylesHidden = {
+const FeatureStylesHidden = {
   'Polygon_A': new ol.style.Style({
     stroke: new ol.style.Stroke({
       color: 'gray',
@@ -101,7 +156,7 @@ const stylesHidden = {
   }),
   'Polygon_B': new ol.style.Style({
     stroke: new ol.style.Stroke({
-      color: 'red',
+      color: 'gray',
       lineDash: null,
       width: 2,
       fill: null,
@@ -109,7 +164,7 @@ const stylesHidden = {
   }),
   'Polygon_C': new ol.style.Style({
     stroke: new ol.style.Stroke({
-      color: 'blue',
+      color: 'gray',
       lineDash: null,
       width: 2,
       fill: null,
@@ -120,9 +175,9 @@ const stylesHidden = {
 
 const styleFunction = function (name, curentZoom, hidden) {
   if (curentZoom < hidden){
-    return stylesActive[name];
+    return FeatureStylesActive[name];
   }
-  return stylesHidden[name];
+  return FeatureStylesHidden[name];
 };
 
 // Geojson - Extractors --------------------------------------------------
@@ -131,6 +186,7 @@ const styleFunction = function (name, curentZoom, hidden) {
 // the goal is to create a layer for each scale and each type automatically
 function Data2Layer(Scale, dataListe){
 let layers = []
+let textLayer = []
 for (ScaleFeature in dataListe) {
   for (typeFeature in dataListe[ScaleFeature]){
     if (dataListe[ScaleFeature][typeFeature].length !==0){
@@ -158,14 +214,13 @@ for (ScaleFeature in dataListe) {
         minZoom : Scale[ScaleFeature].minZoom, 
         declutter: true
       });
-      console.log(Scale[ScaleFeature].minZoom)
-      console.log(layer.getMinZoom())
       layers.push([layer,{
         typeFeature : typeFeature,
         hidden : Scale[ScaleFeature].hidden,
         maxZoom : Scale[ScaleFeature].maxZoom,
         minZoom : Scale[ScaleFeature].minZoom
-      }])
+      }
+    ])
     }
   }
 }
@@ -370,9 +425,101 @@ const graticule = new ol.layer.Graticule({
 
 map.addLayer(graticule);
 
+const vectorSource = new ol.source.Vector({
+  features: [],
+});
+
+const textStyle = new ol.style.Style({
+  text: new ol.style.Text({
+    text: 'Steve',
+    font : `12px Arial`,
+    textBaseline : 'middle',
+    textAlign : 'center',
+    stroke: new ol.style.Stroke({
+      color: 'white',
+    }),
+    fill: new ol.style.Fill({
+      color: 'white'
+    }),
+  })
+});
+
+const vectorLayer = new ol.layer.Vector({
+  source: vectorSource,
+  style: textStyle
+});
+
+const labelFeature = new ol.Feature({
+  geometry: new ol.geom.Point([20, 15])
+});
+
+vectorSource.addFeature(labelFeature);
+
+map.addLayer(vectorLayer);
+
+// FUTURE DRAW OPTION
+/*
+TESTSource = new ol.source.Vector({wrapX: false});
+
+var TESTLayer = new ol.layer.Vector({
+  source: TESTSource,
+});
+
+map.addLayer(TESTLayer)
+
+let draw; // global so we can remove it later
+function addInteraction() {
+  draw = new ol.interaction.Draw({
+    source: TESTSource,
+    type: 'Point',
+    geometryFunction: function(coordinates, geometry) {
+      let xCoordinates = Math.round(coordinates[0] / 30) * 30;
+      let yCoordinates = Math.round(coordinates[1] / 30) * 30;
+      const squareSideLength = 30;
+      const squareGeom = new ol.geom.Polygon([
+        [
+          [xCoordinates - squareSideLength / 2, yCoordinates - squareSideLength / 2],
+          [xCoordinates + squareSideLength / 2, yCoordinates - squareSideLength / 2],
+          [xCoordinates + squareSideLength / 2, yCoordinates + squareSideLength / 2],
+          [xCoordinates - squareSideLength / 2, yCoordinates + squareSideLength / 2],
+          [xCoordinates - squareSideLength / 2, yCoordinates - squareSideLength / 2]
+        ]
+      ]);
+      return squareGeom;
+    }, 
+    style: function(feature) {
+      return new ol.style.Style({
+        image: new ol.style.RegularShape({
+          fill: new ol.style.Fill({color: 'rgba(255, 255, 255, 0.5)'}),
+          stroke: new ol.style.Stroke({color: 'blue', width: 2}),
+          points: 4,
+          radius: 30,
+          angle: Math.PI / 4,
+        }),
+      });
+    }
+  });
+  map.addInteraction(draw);
+}
+
+addInteraction();
+
+const snap = new ol.interaction.Snap({
+  source: TESTLayer.getSource(),
+  pixelTolerance : 50
+});
+map.addInteraction(snap);
+
+  const font = `bold ${48 * 6.6 map.getView().getResolution()}px Trebuchet Ms`
+    vectorLayer.getStyle().getText().setFont(font);
+*/  
+
 
 map.getView().on('change:resolution', (event) => {
-  console.log(map.getView().getZoom())
+  const font = `${12/ 6.6 * 1/map.getView().getResolution()}px Arial`
+  vectorLayer.getStyle().getText().setFont(font);
+
+
   for(layer of layers){
     let hiddenLayer = layer[1].hidden
     let typeFeatureLayer = layer[1].typeFeature
