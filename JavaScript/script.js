@@ -1,4 +1,4 @@
-// Map initalisation
+// VAR INIT
 
 const view = new ol.View({
   center : [0,0],
@@ -15,53 +15,7 @@ const map = new ol.Map({
   target: 'map',
 }) 
 
-// Geojson ----------------------------------------------------------------
-//REF : 
-/*  
-  1 : {
-    Polygon_A : [
-      {
-        'UUDI' : 'XX',
-        'Attributes' : {
-          'title' : 'title 1',
-          'info' : 'information'
-        },
-        'features' : {
-          'type': 'Feature',
-          'geometry': {
-            'type': 'Polygon',
-            'coordinates': [
-              [
-                [10, 10],
-                [10, 20],
-                [30, 20],
-                [30, 10],
-              ],
-            ],
-          }
-        }
-      }
-    ],
-*/
-
-// Geojson - workflow data management--------------------------------------
-
-function generateUUID() { // Public Domain/MIT
-  var d = new Date().getTime();//Timestamp
-  var d2 = ((typeof performance !== 'undefined') && performance.now && (performance.now()*1000)) || 0;//Time in microseconds since page-load or 0 if unsupported
-  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
-      var r = Math.random() * 16;//random number between 0 and 16
-      if(d > 0){//Use timestamp until depleted
-          r = (d + r)%16 | 0;
-          d = Math.floor(d/16);
-      } else {//Use microseconds since page-load if supported
-          r = (d2 + r)%16 | 0;
-          d2 = Math.floor(d2/16);
-      }
-      return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
-  });
-}
-
+// COSNT
 
 const TextStyleActive = {
   'Polygone_A' : new ol.style.Style({
@@ -108,128 +62,207 @@ const TextStyleActive = {
   })
 }
 
-
-// styles 
-const FeatureStylesActive = {
-  'Polygon_A': new ol.style.Style({
-    stroke: new ol.style.Stroke({
-      color: 'white',
-      lineDash: null,
-      width: 2,
-    }),
-    fill: new ol.style.Fill({
-      color: 'rgba(0, 255, 0, 0.05)',
-    }), 
+const TextStyleHidden= {
+  'Polygone_A' : new ol.style.Style({
+    text: new ol.style.Text({
+      text: 'Steve',
+      font : `12px Arial`,
+      textBaseline : 'middle',
+      textAlign : 'center',
+      stroke: new ol.style.Stroke({
+        color: 'white',
+      }),
+      fill: new ol.style.Fill({
+        color: 'white'
+      }),
+    })
   }),
-  'Polygon_B': new ol.style.Style({
-    stroke: new ol.style.Stroke({
-      color: 'white',
-      lineDash: null,
-      width: 2,
-      fill: null,
-    }),
-    fill: new ol.style.Fill({
-      color: 'rgba(255, 255, 255, 0.05)',
-    }),
+  'Polygone_B' : new ol.style.Style({
+    text: new ol.style.Text({
+      text: 'Steve',
+      font : `12px Arial`,
+      textBaseline : 'middle',
+      textAlign : 'center',
+      stroke: new ol.style.Stroke({
+        color: 'white',
+      }),
+      fill: new ol.style.Fill({
+        color: 'white'
+      }),
+    })
   }),
-  'Polygon_C': new ol.style.Style({
-    stroke: new ol.style.Stroke({
-      color: 'white',
-      lineDash: null,
-      width: 2,
-      fill: null,
-    }),
-    fill: new ol.style.Fill({
-      color: 'rgba(0, 0, 0, 0.05)',
-    }),
+  'Polygone_C' : new ol.style.Style({
+    text: new ol.style.Text({
+      text: 'Steve',
+      font : `12px Arial`,
+      textBaseline : 'middle',
+      textAlign : 'center',
+      stroke: new ol.style.Stroke({
+        color: 'white',
+      }),
+      fill: new ol.style.Fill({
+        color: 'white'
+      }),
+    })
   })
+}
+
+const FeatureStylesActive = {
+  'Polygon_A': function (feature) {
+    return new ol.style.Style({
+      stroke: new ol.style.Stroke({
+        color: `${map.getView().getZoom() < 19 ? 'blue' : 'white' }`,
+        lineDash: null,
+        width: 2,
+      }),
+      fill: new ol.style.Fill({
+        color: 'rgba(0, 255, 0, 0.05)',
+      }),
+      text: new ol.style.Text({
+        text: feature.get("name"),
+        font : `${Math.floor(12/ 6.6/map.getView().getResolution())}px Arial`,
+        textBaseline : 'middle',
+        textAlign : 'center',
+        stroke: new ol.style.Stroke({
+          color: 'white',
+        }),
+        fill: new ol.style.Fill({
+          color: 'white'
+        }),
+      })
+    })
+  },
+  'Polygon_B': function (feature) {
+    return new ol.style.Style({
+      stroke: new ol.style.Stroke({
+        color: 'white',
+        lineDash: null,
+        width: 2,
+        fill: null,
+      }),
+      fill: new ol.style.Fill({
+        color: 'rgba(255, 255, 255, 0.05)',
+      }),
+      text: new ol.style.Text({
+        text: feature.get("name"),
+        font : `${Math.floor(48/ 6.6/map.getView().getResolution())}px Arial`,
+        textBaseline : 'middle',
+        textAlign : 'center',
+        stroke: new ol.style.Stroke({
+          color: 'white',
+        }),
+        fill: new ol.style.Fill({
+          color: 'white'
+        })
+      })
+    })
+  },
+  'Polygon_C': function (feature) {
+    return new ol.style.Style({
+      stroke: new ol.style.Stroke({
+        color: 'white',
+        lineDash: null,
+        width: 2,
+        fill: null,
+      }),
+      fill: new ol.style.Fill({
+        color: 'rgba(0, 0, 0, 0.05)',
+      }),
+      text: new ol.style.Text({
+        text: feature.get("name"),
+        font : `${Math.floor(96/ 6.6/map.getView().getResolution())}px Arial`,
+        textBaseline : 'middle',
+        textAlign : 'center',
+        stroke: new ol.style.Stroke({
+          color: 'white',
+        }),
+        fill: new ol.style.Fill({
+          color: 'white'
+        })
+      })
+    })
+  }
 };
 
 const FeatureStylesHidden = {
-  'Polygon_A': new ol.style.Style({
-    stroke: new ol.style.Stroke({
-      color: 'gray',
-      lineDash: [4,2],
-      width: 1,
-      fill: null,
+  'Polygon_A': function (feature) {
+    return new ol.style.Style({
+      stroke: new ol.style.Stroke({
+        color: 'gray',
+        lineDash: [4,2],
+        width: 1,
+        fill: null,
+      }),
+      fill: new ol.style.Fill({
+        color: 'rgba(0, 255, 0, 0.05)',
+      }),
+      text: new ol.style.Text({
+        text: feature.get("name"),
+        font : `${Math.floor(12/ 6.6/map.getView().getResolution())}px Arial`,
+        textBaseline : 'middle',
+        textAlign : 'center',
+        stroke: new ol.style.Stroke({
+          color: 'white',
+        }),
+        fill: new ol.style.Fill({
+          color: 'white'
+        }),
+      })
     })
-  }),
-  'Polygon_B': new ol.style.Style({
-    stroke: new ol.style.Stroke({
-      color: 'gray',
-      lineDash: null,
-      width: 2,
-      fill: null,
+  },
+  'Polygon_B': function (feature) {
+    return new ol.style.Style({
+      stroke: new ol.style.Stroke({
+        color: 'gray',
+        lineDash: [4,2],
+        width: 1,
+        fill: null,
+      }),
+      fill: new ol.style.Fill({
+        color: 'rgba(255, 255, 255, 0.05)',
+      }),
+      text: new ol.style.Text({
+        text: feature.get("name"),
+        font : `${Math.floor(48/ 6.6/map.getView().getResolution())}px Arial`,
+        textBaseline : 'middle',
+        textAlign : 'center',
+        stroke: new ol.style.Stroke({
+          color: 'white',
+        }),
+        fill: new ol.style.Fill({
+          color: 'white'
+        })
+      })
     })
-  }),
-  'Polygon_C': new ol.style.Style({
-    stroke: new ol.style.Stroke({
-      color: 'gray',
-      lineDash: null,
-      width: 2,
-      fill: null,
+  },
+  'Polygon_C': function (feature) {
+    return new ol.style.Style({
+      stroke: new ol.style.Stroke({
+        color: 'gray',
+        lineDash: [4,2],
+        width: 1,
+        fill: null,
+      }),
+      fill: new ol.style.Fill({
+        color: 'rgba(0, 0, 0, 0.05)',
+      }),
+      text: new ol.style.Text({
+        text: feature.get("name"),
+        font : `${Math.floor(96/ 6.6/map.getView().getResolution())}px Arial`,
+        textBaseline : 'middle',
+        textAlign : 'center',
+        stroke: new ol.style.Stroke({
+          color: 'white',
+        }),
+        fill: new ol.style.Fill({
+          color: 'white'
+        })
+      })
     })
-  })
+  }
 };
 
-
-const styleFunction = function (name, curentZoom, hidden) {
-  if (curentZoom < hidden){
-    return FeatureStylesActive[name];
-  }
-  return FeatureStylesHidden[name];
-};
-
-// Geojson - Extractors --------------------------------------------------
-
-
-// the goal is to create a layer for each scale and each type automatically
-function Data2Layer(Scale, dataListe){
-let layers = []
-let textLayer = []
-for (ScaleFeature in dataListe) {
-  for (typeFeature in dataListe[ScaleFeature]){
-    if (dataListe[ScaleFeature][typeFeature].length !==0){
-      let tempFeatures = {
-        'style' : null,
-        'type': 'FeatureCollection',
-        'crs': {
-          'type': 'name',
-          'properties': {
-            'name': 'EPSG:4326',
-          },
-        },
-        'features': [],
-      }; 
-      for (item of dataListe[ScaleFeature][typeFeature]){
-        tempFeatures.features.push(item.features);
-      }
-      let Source = new ol.source.Vector({
-        features: new ol.format.GeoJSON().readFeatures({...tempFeatures}),
-      });
-      const layer = new ol.layer.Vector({
-        source: Source,
-        style: styleFunction(typeFeature, map.getView().getZoom(),Scale[ScaleFeature].hidden),
-        maxZoom : Scale[ScaleFeature].maxZoom, 
-        minZoom : Scale[ScaleFeature].minZoom, 
-        declutter: true
-      });
-      layers.push([layer,{
-        typeFeature : typeFeature,
-        hidden : Scale[ScaleFeature].hidden,
-        maxZoom : Scale[ScaleFeature].maxZoom,
-        minZoom : Scale[ScaleFeature].minZoom
-      }
-    ])
-    }
-  }
-}
-return layers
-}
-
-
-
-const Scale = {
+const ScaleParameters = {
   1 : {
     hidden : 9999,
     maxZoom : 9999, 
@@ -247,171 +280,77 @@ const Scale = {
   }
 }
 
-var workflowLink = [
+const WorkFlowLinkListe = [
 ]
 
-var workflowItem = {
-  1 : {
-    Polygon_A : [
-      {
-        'UUDI' : 'XX',
-        'Attributes' : {
-          'title' : 'title 1',
-          'info' : 'information'
-        },
-        'features' : {
-          'type': 'Feature',
-          'geometry': {
-            'type': 'Polygon',
-            'coordinates': [
-              [
-                [10, 10],
-                [10, 20],
-                [30, 20],
-                [30, 10],
-              ],
-            ],
-          }
-        }
-      }
+const WorkFlowItemListe = [
+{
+  "type": "Feature",
+  "properties": {
+    "name": 'TEST',
+    "info": 1,
+    "scale": 1,
+    "type": 'Polygon_A',
+    "uuid": 1
+  },
+  "geometry": {
+    "coordinates": [
+      [
+        [10, 10],
+        [10, 20],
+        [30, 20],
+        [30, 10],
+      ]
     ],
-    Polygon_B : [
-      {
-        'UUDI' : 'XX',
-        'Attributes' : {
-          'title' : 'title 1',
-          'info' : 'information'
-        },
-        'features' : {
-          'type': 'Feature',
-          'geometry': {
-            'type': 'Polygon',
-            'coordinates': [
-              [
-                [50, 10],
-                [50, 20],
-                [30, 20],
-                [30, 10],
-              ],
-            ],
-          }
-        }
-      }
-    ], 
-    Polygon_C : [
-
-    ], 
-  }, 
-  2 : {
-    Polygon_A : [{
-      'UUDI' : 'XX',
-      'Attributes' : {
-        'title' : 'title 1',
-        'info' : 'information'
-      },
-      'features' : {
-        'type': 'Feature',
-        'geometry': {
-          'type': 'Polygon',
-          'coordinates': [
-            [
-              [10, 10],
-              [10, 200],
-              [300, 200],
-              [300, 10],
-            ],
-          ],
-        }
-      }
-    },
-    {
-      'UUDI' : 'XX',
-      'Attributes' : {
-        'title' : 'title 1',
-        'info' : 'information'
-      },
-      'features' : {
-        'type': 'Feature',
-        'geometry': {
-          'type': 'Polygon',
-          'coordinates': [
-            [
-              [350, 10],
-              [350, 200],
-              [650, 200],
-              [650, 10],
-            ],
-          ],
-        }
-      }
-    }
+    "type": "Polygon"
+  },
+  "id": 0
+},
+{
+  "type": "Feature",
+  "properties": {
+    "name": 'TEST 69',
+    "info": 1,
+    "scale": 1,
+    "type": 'Polygon_A',
+    "uuid": 1
+  },
+  "geometry": {
+    "coordinates": [
+      [
+        [10, 10],
+        [10, 20],
+        [30, 20],
+        [30, 10],
+      ]
     ],
-    Polygon_B : [
-
-    ], 
-    Polygon_C : [
-
-    ], 
-  }, 
-  3 : {
-    Polygon_A : [
-      {
-        'UUDI' : 'XX',
-        'Attributes' : {
-          'title' : 'title 1',
-          'info' : 'information'
-        },
-        'features' : {
-          'type': 'Feature',
-          'geometry': {
-            'type': 'Polygon',
-            'coordinates': [
-              [
-                [10, 10],
-                [10, 2000],
-                [3000, 2000],
-                [3000, 10],
-              ],
-            ],
-          }
-        }
-      }, 
-      {
-        'UUDI' : 'XX',
-        'Attributes' : {
-          'title' : 'title 1',
-          'info' : 'information'
-        },
-        'features' : {
-          'type': 'Feature',
-          'geometry': {
-            'type': 'Polygon',
-            'coordinates': [
-              [
-                [3510, 10],
-                [3510, 2000],
-                [6510, 2000],
-                [6510, 10],
-              ],
-            ],
-          }
-        }
-      }
+    "type": "Polygon"
+  },
+  "id": 0
+},
+{
+  "type": "Feature",
+  "properties": {
+    "name": 'STEVE',
+    "info": 1,
+    "scale": 2,
+    "type": 'Polygon_C',
+    "uuid": 1
+  },
+  "geometry": {
+    "coordinates": [
+      [
+        [10, 10],
+        [10, 200],
+        [300, 200],
+        [300, 10],
+      ]
     ],
-    Polygon_B : [
-
-  ], 
-    Polygon_C : [
-
-    ], 
-  }
+    "type": "Polygon"
+  },
+  "id": 1
 }
-
-var layers = Data2Layer({...Scale}, workflowItem)
-
-for (layer of layers) {
-  map.addLayer(layer[0]);
-}
+]
 
 const graticule = new ol.layer.Graticule({
   strokeStyle: new ol.style.Stroke({
@@ -423,113 +362,118 @@ const graticule = new ol.layer.Graticule({
   wrapX: false,
 })
 
-map.addLayer(graticule);
+// FUNCTIONS
 
-const vectorSource = new ol.source.Vector({
-  features: [],
-});
+const styleFunction = function (name, curentZoom, hidden) {
+  if (curentZoom < hidden){
+    return FeatureStylesActive[name];
+  }
+  return FeatureStylesActive[name];
+};
 
-const textStyle = new ol.style.Style({
-  text: new ol.style.Text({
-    text: 'Steve',
-    font : `12px Arial`,
-    textBaseline : 'middle',
-    textAlign : 'center',
-    stroke: new ol.style.Stroke({
-      color: 'white',
-    }),
-    fill: new ol.style.Fill({
-      color: 'white'
-    }),
-  })
-});
 
-const vectorLayer = new ol.layer.Vector({
-  source: vectorSource,
-  style: textStyle
-});
+function list2dic (list) {
+  var dic = {}
+  list.forEach(item => {
 
-const labelFeature = new ol.Feature({
-  geometry: new ol.geom.Point([20, 15])
-});
-
-vectorSource.addFeature(labelFeature);
-
-map.addLayer(vectorLayer);
-
-// FUTURE DRAW OPTION
-/*
-TESTSource = new ol.source.Vector({wrapX: false});
-
-var TESTLayer = new ol.layer.Vector({
-  source: TESTSource,
-});
-
-map.addLayer(TESTLayer)
-
-let draw; // global so we can remove it later
-function addInteraction() {
-  draw = new ol.interaction.Draw({
-    source: TESTSource,
-    type: 'Point',
-    geometryFunction: function(coordinates, geometry) {
-      let xCoordinates = Math.round(coordinates[0] / 30) * 30;
-      let yCoordinates = Math.round(coordinates[1] / 30) * 30;
-      const squareSideLength = 30;
-      const squareGeom = new ol.geom.Polygon([
-        [
-          [xCoordinates - squareSideLength / 2, yCoordinates - squareSideLength / 2],
-          [xCoordinates + squareSideLength / 2, yCoordinates - squareSideLength / 2],
-          [xCoordinates + squareSideLength / 2, yCoordinates + squareSideLength / 2],
-          [xCoordinates - squareSideLength / 2, yCoordinates + squareSideLength / 2],
-          [xCoordinates - squareSideLength / 2, yCoordinates - squareSideLength / 2]
-        ]
-      ]);
-      return squareGeom;
-    }, 
-    style: function(feature) {
-      return new ol.style.Style({
-        image: new ol.style.RegularShape({
-          fill: new ol.style.Fill({color: 'rgba(255, 255, 255, 0.5)'}),
-          stroke: new ol.style.Stroke({color: 'blue', width: 2}),
-          points: 4,
-          radius: 30,
-          angle: Math.PI / 4,
-        }),
-      });
+    if (item.properties.hasOwnProperty("scale") && item.properties.hasOwnProperty("type")) {
+      if (!dic.hasOwnProperty(item.properties.scale)) {
+        dic[item.properties.scale] = {};
+      }
+      if (!dic[item.properties.scale].hasOwnProperty(item.properties.type)) {
+        dic[item.properties.scale][item.properties.type] = []
+      }
+      dic[item.properties.scale][item.properties.type].push(item)
     }
-  });
-  map.addInteraction(draw);
+
+  })
+return dic
+};
+
+function dic2Layer(Scale, dic){
+  let layers = []
+  let textLayer = []
+  for (scale in dic) {
+    for (type in dic[scale]){
+      if (dic[scale][type].length !==0){
+        let tempFeatures = {
+          'style' : null,
+          'type': 'FeatureCollection',
+          'crs': {
+            'type': 'name',
+            'properties': {
+              'name': 'EPSG:4326',
+            },
+          },
+          'features': [],
+        }
+        for (item of dic[scale][type]){
+          tempFeatures.features.push(item);
+        }
+        let Source = new ol.source.Vector({
+          features: new ol.format.GeoJSON().readFeatures({...tempFeatures})    
+        });
+        const layer = new ol.layer.Vector({
+          source: Source,
+          style: styleFunction(type, map.getView().getZoom(),Scale[scale].hidden),
+          maxZoom : Scale[scale].maxZoom, 
+          minZoom : Scale[scale].minZoom, 
+          declutter: true
+        });
+        layers.push([layer,{
+          typeFeature : type,
+          hidden : Scale[scale].hidden,
+          maxZoom : Scale[scale].maxZoom,
+          minZoom : Scale[scale].minZoom
+        }
+      ])
+      }
+    }
+  }
+return layers
 }
 
-addInteraction();
+// FUNCTIONS OPENLAYERS 
 
-const snap = new ol.interaction.Snap({
-  source: TESTLayer.getSource(),
-  pixelTolerance : 50
-});
-map.addInteraction(snap);
 
-  const font = `bold ${48 * 6.6 map.getView().getResolution()}px Trebuchet Ms`
-    vectorLayer.getStyle().getText().setFont(font);
-*/  
 
+
+// CODE
+map.addLayer(graticule);
+
+var WorkFlowItemDic = list2dic(WorkFlowItemListe)
+
+var WorkFlowItemLayer = dic2Layer(ScaleParameters, WorkFlowItemDic)
+
+for (layer of WorkFlowItemLayer) {
+  map.addLayer(layer[0]);
+}
 
 map.getView().on('change:resolution', (event) => {
-  const font = `${12/ 6.6 * 1/map.getView().getResolution()}px Arial`
-  vectorLayer.getStyle().getText().setFont(font);
-
-
-  for(layer of layers){
-    let hiddenLayer = layer[1].hidden
-    let typeFeatureLayer = layer[1].typeFeature
-    layer[0].setStyle(function(feature, resolution) {
-      return styleFunction(typeFeatureLayer, map.getView().getZoom(),hiddenLayer);
-    }, 
-  )}
+  console.log(map.getView().getZoom())
 });
 
-//HTML Content functions
+
+// EVENT Listener
+/*
+map.getView().on('change:resolution', (event) => {
+ 
+  for(layer of WorkFlowItemLayer){
+    let hiddenLayer = layer[1].hidden
+    let typeFeatureLayer = layer[1].typeFeature
+    console.log(typeFeatureLayer,hiddenLayer)
+    
+    layer[0].setStyle(function(feature, resolution) {
+      return styleFunction({...typeFeatureLayer}, map.getView().getZoom(),{...hiddenLayer});
+      return new ol.style.Style({})
+    })
+  }
+});
+*/
+
+
+
+// FUNCTIONS HTML
 function openPopup() {
   document.getElementById("overlay").style.display = "block";
   document.getElementById("popup").style.display = "block";
@@ -565,5 +509,4 @@ function EditEnd() {
   document.getElementById("overlay").style.display = "none";
   document.getElementById("popupEdit").style.display = "none";
 }
-
 
