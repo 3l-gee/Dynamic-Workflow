@@ -17,8 +17,39 @@ const map = new ol.Map({
 
 // COSNT
 
+const LinkStylesActive = {
 
+
+}
 const FeatureStylesActive = {
+  'Link_A' : function (feature) {
+    const styles = [
+      new ol.style.Style({
+        stroke: new ol.style.Stroke({
+          color: `${map.getView().getZoom() > ScaleParameters[feature.get("scale")].hidden ? 'rgba(187,187,187,0.5)' : 'white' }`,
+          width: 2,
+        }),
+      }),
+    ]
+      styles.push(
+      new ol.style.Style({
+        geometry : new ol.geom.Point(feature.getGeometry().getLastCoordinate()),
+        image: new ol.style.RegularShape({
+          fill: new ol.style.Fill({
+            color : 'white',
+          }),
+          stroke: new ol.style.Stroke({
+            color: `${map.getView().getZoom() > ScaleParameters[feature.get("scale")].hidden ? 'rgba(187,187,187,0.5)' : 'white' }`,
+            width: 1
+          }),
+          points: 3,
+          radius: 10,
+          angle: Math.PI/2
+        })
+      })
+    )
+    return styles
+  },
   'Polygon_A': function (feature) {
     return new ol.style.Style({
       stroke: new ol.style.Stroke({
@@ -193,7 +224,7 @@ const WorkFlowLinkList = [
       "name": 'LINE 1',
       "info": 1,
       "scale": 1,
-      "type": 'Polygon_A',
+      "type": 'Link_A',
       'start' : 'f20eeb3b-4bb0-4146-bf9f-e9021ee67949',
       'end' : '870d112a-453c-42c9-a879-c99e42daa7c6'
     },
@@ -210,9 +241,43 @@ const WorkFlowLinkList = [
       "name": 'LINE 2',
       "info": 1,
       "scale": 1,
-      "type": 'Polygon_A',
+      "type": 'Link_A',
       'start' : '870d112a-453c-42c9-a879-c99e42daa7c6',
       'end' : 'c26fab39-fb86-4848-8418-5d885378bb5f'
+    },
+    "geometry": {
+      "coordinates": [
+      ],
+      "type": "LineString"
+    },
+    "id": '9fa3ba5a-b94e-463c-a60c-37042ea657c5'
+  },
+  {
+    "type": "Feature",
+    "properties": {
+      "name": 'LINE 3',
+      "info": 1,
+      "scale": 2,
+      "type": 'Link_A',
+      'start' : '45b440fd-828c-405a-972e-383519ff1ddc',
+      'end' : '6b0d8cbe-95d9-4cca-9afb-f2a3787d695f'
+    },
+    "geometry": {
+      "coordinates": [
+      ],
+      "type": "LineString"
+    },
+    "id": '9fa3ba5a-b94e-463c-a60c-37042ea657c1'
+  },
+  {
+    "type": "Feature",
+    "properties": {
+      "name": 'LINE 4',
+      "info": 1,
+      "scale": 2,
+      "type": 'Link_A',
+      'start' : '6b0d8cbe-95d9-4cca-9afb-f2a3787d695f',
+      'end' : '45b440fd-828c-405a-972e-383519ff1ddc'
     },
     "geometry": {
       "coordinates": [
@@ -364,12 +429,56 @@ const graticule = new ol.layer.Graticule({
 
 // FUNCTIONS
 
-const styleFunction = function (name, curentZoom, hidden) {
+function styleFunction (name, curentZoom, hidden) {
   if (curentZoom < hidden){
     return FeatureStylesActive[name];
   }
   return FeatureStylesActive[name];
 };
+
+function line2OrthoLine(start, end, scale) {
+  let list = []
+
+  start2 = start[0][2]
+  start3 = start[0][3]
+  startMid = [start2[0], (start2[1] + start3[1]) /2]
+
+  end0 = end[0][0]
+  end1 = end[0][1]
+  endMid = [end0[0], (end1[1] + end0[1]) /2]
+
+  dx = endMid[0] - startMid[0]
+  dy = endMid[1] - startMid[1]
+  
+  //Cases : [DX+ DY+/-, DX- DY+/-, DX- DY+, DX- DY+
+  list.push([startMid[0],     startMid[1]])
+  list.push([startMid[0] + 4*scale.textMult, startMid[1]])
+
+  if (dx > 0 && dy > 0){
+    list.push([startMid[0] + dx/2,  startMid[1]])
+    list.push([startMid[0] + dx/2,  startMid[1] + dy])
+  } else if (dx > 0 && dy < 0 ) {
+    list.push([startMid[0] + dx/2,  startMid[1]])
+    list.push([startMid[0] + dx/2,  startMid[1] + dy])
+  } else if (dx < 0 && dy < 0 ) {
+    list.push([startMid[0] + 4*scale.textMult,  startMid[1] + dy/2])
+    list.push([endMid[0] - 4 * scale.textMult,  startMid[1] + dy/2])
+  } else if (dx < 0 && dy > 0) {
+    list.push([startMid[0] + 4*scale.textMult,  startMid[1] + dy/2])
+    list.push([endMid[0] - 4 * scale.textMult,  startMid[1] + dy/2])
+  } else if (dx == 0) {
+  } else if (dy == 0 && dx < 0) {
+    list.push([startMid[0] + 4*scale.textMult,       startMid[1] + 8*scale.textMult])
+    list.push([endMid[0] - 4*scale.textMult,       endMid[1] + 8*scale.textMult])
+  }  else if (dy == 0 && dx > 0) {
+  }
+
+  list.push([endMid[0] - 4 * scale.textMult,     endMid[1]])
+  list.push([endMid[0] - 0.5 * scale.textMult,       endMid[1]])
+
+  return list
+};
+
 
 function list2hash (list) {
   let dic = {}
@@ -415,11 +524,13 @@ function linkDic2Layer(Scale, linkDic, itemList, itemHash){
           'features': [],
         }        
         for (item of linkDic[scale][type]){
-          let start = itemList[itemHash[item.properties.start]].geometry.coordinates[0][3]
-          let end = itemList[itemHash[item.properties.end]].geometry.coordinates[0][1]
+          let start = itemList[itemHash[item.properties.start]].geometry.coordinates
+          let end = itemList[itemHash[item.properties.end]].geometry.coordinates
+
+          pointList = line2OrthoLine(start, end, Scale[scale])
           
-          item.geometry.coordinates.push(start)
-          item.geometry.coordinates.push(end)
+          item.geometry.coordinates = pointList
+
           tempFeatures.features.push(item);
         }
 
@@ -521,59 +632,7 @@ map.getView().on('change:resolution', (event) => {
   console.log(map.getView().getResolution())
 });
 
-/*
-var source =  new ol.source.Vector({
-  features: [
-    new ol.Feature({
-      geometry: new ol.geom.LineString([[0,0],[-10,10]])
-    })
-  ]
-});
 
-
-const TEST = function (feature) {
-  const start = new ol.geom.Point(feature.getGeometry().getFirstCoordinate())
-  const end = new ol.geom.Point(feature.getGeometry().getLastCoordinate())
-  const styles = [
-    // linestring
-    new ol.style.Style({
-      stroke: new ol.style.Stroke({
-        color: '#ffcc33',
-        width: 2,
-      }),
-    }),
-  ]
-
-  const dx = end[0] - start[0];
-  const dy = end[1] - start[1];
-  const rotation = Math.atan2(dy, dx);
-  styles.push(
-    new ol.style.Style({
-
-      image: new ol.style.RegularShape({
-        fill: new ol.style.Fill({
-          color: 'blue'
-        }),
-        stroke: new ol.style.Stroke({
-          color: 'black',
-          width: 2
-        }),
-        points: 3,
-        radius: 10,
-        angle: Math.PI / 4
-      })
-    })
-  )
-  return styles
-}
-
-const vector = new ol.layer.Vector({
-  source: source,
-  style : TEST
-});
-
-map.addLayer(vector)
-*/
 
 // EVENT Listener
 /*
@@ -591,8 +650,99 @@ map.getView().on('change:resolution', (event) => {
   }
 });
 */
+/*
+var gridSource = new ol.source.Vector({});
 
+// Create a vector layer and set its source to the empty vector source
+var gridLayer = new ol.layer.Vector({
+  source: gridSource
+});
 
+// Add the vector layer to the map
+map.addLayer(gridLayer);
+
+// Define the grid spacing
+var Xspacing = 40;
+var Yspacing = 20;
+
+// Create a function that generates point geometries for a given extent
+function generatePoints(extent) {
+  var points = [];
+  var minX = extent[0];
+  var minY = extent[1];
+  var maxX = extent[2];
+  var maxY = extent[3];
+  for (var x = minX; x < maxX; x += Xspacing) {
+    for (var y = minY; y < maxY; y += Yspacing) {
+      var point = new ol.geom.Point([x, y]);
+      points.push(new ol.Feature(point));
+    }
+  }
+  return points;
+}
+
+// Create a listener for the "postrender" event of the map
+map.on('postrender', function(event) {
+  // Get the current view extent of the map
+  var extent = event.frameState.extent;
+  // Generate point geometries for the current extent
+  var points = generatePoints(extent);
+  // Clear the vector source and add the generated points
+  gridSource.clear();
+  gridSource.addFeatures(points);
+});
+
+TESTSource = new ol.source.Vector({wrapX: false});
+
+var TESTLayer = new ol.layer.Vector({
+  source: TESTSource,
+});
+
+map.addLayer(TESTLayer)
+
+let draw; // global so we can remove it later
+function addInteraction() {
+  draw = new ol.interaction.Draw({
+    source: TESTSource,
+    type: 'Point',
+    geometryFunction: function(coordinates, geometry) {
+      let xCoordinates = coordinates[0]
+      let yCoordinates = coordinates[1]
+      const squareSideLength = 1;
+      const squareGeom = new ol.geom.Polygon([
+        [
+          [xCoordinates - 10, yCoordinates - 5],
+          [xCoordinates - 10, yCoordinates + 5],
+          [xCoordinates + 10, yCoordinates + 5],
+          [xCoordinates + 10, yCoordinates - 5],
+        ]
+      ]);
+      return squareGeom;
+    }, 
+    style: function(feature) {
+      return new ol.style.Style({
+        image: new ol.style.RegularShape({
+          fill: new ol.style.Fill({color: 'rgba(255, 255, 255, 0.5)'}),
+          stroke: new ol.style.Stroke({color: 'blue', width: 2}),
+          points: 4,
+          radius: 30,
+          angle: Math.PI / 4,
+        }),
+      });
+    }
+  });
+  map.addInteraction(draw);
+}
+
+addInteraction();
+
+const snap = new ol.interaction.Snap({
+  source: gridLayer.getSource(),
+  pixelTolerance : 5000
+});
+map.addInteraction(snap);
+
+*/
 
 // FUNCTIONS HTML
 function openPopup() {
