@@ -7,6 +7,13 @@ p,h1,h2,h3,h4,h5,h6,label {
   color: #f8f8f8;
 }
 
+li{
+  font: Trebuchet MS;
+  color: #f8f8f8;
+  margin-left: -20px;
+
+}
+
 
 .map {
   height: 100%;
@@ -83,8 +90,6 @@ p,h1,h2,h3,h4,h5,h6,label {
   padding: 20px;
 }
 
-
-/* Style for grayed out background */
 .overlay {
   display: none;
   position: fixed;  
@@ -174,11 +179,71 @@ p,h1,h2,h3,h4,h5,h6,label {
   color: #ffffff;
 }
 
+.formButtonSubmit {
+  text-align: right;
+  display: inline-block;
+  border: none;
+  background-color: rgb(0, 0, 0);
+  font-size: 1.17em;
+  color: white;
+  width : 100%;
+  text-align: center;
+  margin-top: 10px;
+  transition-duration: 0.4s;
+  cursor: pointer; 
+}
+
+.formButtonSubmit:hover {
+  background-color: #007d9c;
+  color: #ffffff;
+}
+
+.FormtypeOption {
+  padding: 10px 10px;
+  border-bottom: 1px solid black;
+}
+
+.FormScaleOption {
+  padding: 10px 10px;
+  border-bottom: 1px solid black;
+  display: none;
+}
+
+.FormStyleOption {
+  padding: 10px 10px;
+  border-bottom: 1px solid black;
+  display: none;
+}
+
+.FormTitleOption{
+  padding-bottom: 10px;
+  border-bottom: 1px solid black;
+  display: none;
+}
+
+.FormInfoOption{
+  border-bottom: 1px solid black;
+  display: none;
+}
+
+.divNameInput {
+  display: block;
+  padding: 10px;
+  font-size: 14px;
+  background-color: rgb(0, 0, 0);
+}
+
+.divInfoInput {
+  display: block;
+  padding: 10px;
+  font-size: 14px;
+  background-color: rgb(0, 0, 0);
+}
 
 #overlay {
   text-decoration: none;
   color: white;
-  font-size: 11pt;
+  font-size: 1.17em;
   font-weight: bold;
   text-shadow: black 0.1em 0.1em 0.2em;
 }

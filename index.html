@@ -31,36 +31,79 @@
       <div class="content">
         <h3>_Draw Workflow_</h3>
         <p>Actions or Connections</p>
-        <form>
-          <input type="radio" id="option1" name="options" onclick="DrawActions()">
-          <label for="option1">Actions</label><br>
-          <input type="radio" id="option2" name="options" onclick="DrawConnections()">
-          <label for="css">Connections</label><br>
-        </form>
-        <form action="/action_page.php">
-          <select name="cars" id="cars">
-            <option value="Def"></option>
-            <option value="1">1</option>
-            <option value="2">2</option>
-            <option value="3">3</option>
-          </select>
-          <label for="cars">Scale</label>
-        </form>
-        <form action="/action_page.php">
-          <select name="cars" id="cars">
-            <option value="Def"></option>
-            <option value="A">Start Point</option>
-            <option value="B">Decision point</option>
-            <option value="C">End Point</option>
-          </select>
-          <label for="cars">Type</label>
-          <br><br>
-          <input type="submit" value="Submit">
-        </form>
-      </div>
+          <div class="FormtypeOption">
+            <div class ="typeOption1" id = typeOption1>
+              <input type="radio" id="option1" onclick="DrawFeature('Actions')">
+              <label for="option1">Actions</label><br>
+            </div>
+            <div id = typeOption2>
+              <input type="radio" id="option2" onclick="DrawFeature('Connections')">
+              <label for="option2">Connections</label><br>
+            </div>
+          </div>
+          <div class ="FormScaleOption" id ="FormScaleOption">
+            <div id = ScaleOption1>
+              <input type="radio" id="option1" onclick="DrawScale(1)">
+              <label for="option1">Scale 1 </label><br>
+            </div>
+            <div id = ScaleOption2>
+              <input type="radio" id="option2" onclick="DrawScale(2)">
+              <label for="option2">Scale 2</label><br>
+            </div>
+            <div id = ScaleOption3>
+              <input type="radio" id="option3" onclick="DrawScale(3)">
+              <label for="option3">Scale 3</label><br>
+            </div>
+          </div>
+          <div class ="FormStyleOption" id ="FormStyleOptionLink">
+            <div id = FormStyleOptionLink1>
+              <input type="radio" id="option1" onclick="DrawStyle('Link_A')">
+              <label for="option1">Link_A</label><br>
+            </div>
+            <div id = FormStyleOptionLink2>
+              <input type="radio" id="option2" onclick="DrawStyle('Link_B')">
+              <label for="option2">Link_B</label><br>
+            </div>
+            <div id = FormStyleOptionLink3>
+              <input type="radio" id="option3" onclick="DrawStyle('Link_C')">
+              <label for="option3">Link_C</label><br>
+            </div>
+          </div>
+          <div class ="FormStyleOption" id ="FormStyleOptionItem">
+            <div id = FormStyleOptionItem1>
+              <input type="radio" id="option1" onclick="DrawStyle('Polygon_A')">
+              <label for="option1">Polygon_A </label><br>
+            </div>
+            <div id = FormStyleOptionItem2>
+              <input type="radio" id="option2" onclick="DrawStyle('Polygon_B')">
+              <label for="option2">Polygon_B </label><br>
+            </div>
+            <div id = FormStyleOptionItem3>
+              <input type="radio" id="option3" onclick="DrawStyle('Polygon_C')">
+              <label for="option3">Polygon_C </label><br>
+            </div>
+          </div>
+          <div class ="FormTitleOption" id ="FormTitleOption">
+            <div class="divNameInput" contenteditable="true">
+              <p>Enter your Title</p>
+            </div>
+            <button class="formButtonSubmit" id="formButtonSubmitName" onclick="DrawName()">Submit</button>
+          </div>
+          <div class ="FormInfoOption" id ="FormInfoOption">
+            <div class="divInfoInput" contenteditable="true">
+              <p>Your can write a description here</p>
+              <ul>
+                <li><b>*It can be BOLD*</b></li>
+                <li><i>_It can be in italic_</i></li>
+                <li>And as a list</li>
+              </ul>  
+            </div> 
+            <button class="formButtonSubmit" id="formButtonSubmitInfo" onclick="DrawInfo()">Submit</button>      
+          </div>
+        </div>
       <div class="windowButtonDiv">
         <button class="windowButtonSave" onclick="DrawEnd()">Save</button>
-        <button class="windowButton" onclick="DrawEnd()">Edit</button>
+        <button class="windowButton" onclick="DrawReset()">Rest</button>
         <button class="windowButtonExit" onclick="DrawEnd()">Exit</button>
       </div>  
     </div>
@@ -95,7 +138,6 @@
     <div id="map" class="map" tabindex="0" style="z-index: 0;"></div>
     <script type = "text/javascript" src="https://cdn.jsdelivr.net/npm/ol@v7.3.0/dist/ol.js"></script>
     <script type = "text/javascript" src = "JavaScript/script.js"></script>
-    <script type = "text/javascript" src = "Json/package.json"></script> 
 
 
 

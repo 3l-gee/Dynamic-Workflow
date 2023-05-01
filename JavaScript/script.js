@@ -1,5 +1,3 @@
-// VAR INIT
-
 const view = new ol.View({
   center : [0,0],
   zoom : 20,
@@ -16,6 +14,42 @@ const map = new ol.Map({
 }) 
 
 // COSNT
+
+const EmptyItem = {
+  "type": "Feature",
+  "properties": {
+    "name": '',
+    "info": '',
+    "scale": 0,
+    "style": '',
+  },
+  "geometry": {
+    "coordinates": [
+    ],
+    "type": "Polygon"
+  },
+  "id": ''
+}
+
+var inputFeature = {}
+
+const Emptylink =   {
+  "type": "Feature",
+  "properties": {
+    "name": '',
+    "info": '',
+    "scale": 1,
+    "style": '',
+    'start' : '',
+    'end' : ''
+  },
+  "geometry": {
+    "coordinates": [
+    ],
+    "type": "LineString"
+  },
+  "id": ''
+}
 
 const LinkStylesActive = {
 
@@ -650,12 +684,13 @@ map.getView().on('change:resolution', (event) => {
   }
 });
 */
-/*
 var gridSource = new ol.source.Vector({});
 
 // Create a vector layer and set its source to the empty vector source
 var gridLayer = new ol.layer.Vector({
-  source: gridSource
+  source: gridSource,
+  visible: false, // set layer as hidden
+  interact: true, // set layer as interactable
 });
 
 // Add the vector layer to the map
@@ -692,14 +727,18 @@ map.on('postrender', function(event) {
   gridSource.addFeatures(points);
 });
 
+
 TESTSource = new ol.source.Vector({wrapX: false});
 
 var TESTLayer = new ol.layer.Vector({
   source: TESTSource,
+  
 });
 
 map.addLayer(TESTLayer)
 
+
+/*
 let draw; // global so we can remove it later
 function addInteraction() {
   draw = new ol.interaction.Draw({
@@ -733,16 +772,42 @@ function addInteraction() {
   });
   map.addInteraction(draw);
 }
-
-addInteraction();
+*/
 
 const snap = new ol.interaction.Snap({
   source: gridLayer.getSource(),
   pixelTolerance : 5000
 });
-map.addInteraction(snap);
 
-*/
+
+const select = new ol.interaction.Select({
+});
+
+
+const modify = new ol.interaction.Modify({
+  features: select.getFeatures(),
+  insertVertexCondition: function () {
+    // prevent new vertices to be added to the polygons
+    return !select
+      .getFeatures()
+      .getArray()
+      .every(function (feature) {
+        return /Polygon/.test(feature.getGeometry().getType());
+      });
+  },
+});
+
+
+const translate = new ol.interaction.Translate({
+  features: select.getFeatures(),
+});
+
+
+map.addInteraction(select);
+map.addInteraction(snap);
+map.addInteraction(modify);
+map.addInteraction(translate);
+
 
 // FUNCTIONS HTML
 function openPopup() {
@@ -760,6 +825,110 @@ function DrawStart() {
   document.getElementById("control").style.display = "none";
   document.getElementById("overlay").style.display = "block";
   document.getElementById("popupDraw").style.display = "block";
+}
+
+function DrawFeature(inputType){
+  if (inputType === "Actions") {
+    document.getElementById("FormScaleOption").style.display = "block";
+    document.getElementById("typeOption2").style.display = "none";
+    inputFeature = {...EmptyItem}
+  } if (inputType === "Connections") {
+    document.getElementById("FormScaleOption").style.display = "block";
+    document.getElementById("typeOption1").style.display = "none";
+    inputFeature = {...Emptylink}
+  }
+  return inputFeature
+}
+
+function DrawScale(inputScale) {
+  if (inputScale == 1) {
+    document.getElementById("ScaleOption2").style.display = "none";
+    document.getElementById("ScaleOption3").style.display = "none";
+    inputFeature.properties.scale = inputScale
+  } 
+  if (inputScale == 2 ) {
+    document.getElementById("ScaleOption1").style.display = "none";
+    document.getElementById("ScaleOption3").style.display = "none";
+    inputFeature.properties.scale = inputScale
+  } 
+  if (inputScale == 3 ) {
+    document.getElementById("ScaleOption1").style.display = "none";
+    document.getElementById("ScaleOption2").style.display = "none";
+    inputFeature.properties.scale = inputScale
+  } 
+  if (inputFeature.geometry.type == "Polygon"){
+    document.getElementById("FormStyleOptionItem").style.display = "block";
+  } 
+  if (inputFeature.geometry.type == "LineString"){
+    document.getElementById("FormStyleOptionLink").style.display = "block";
+  }
+}
+function DrawStyle(inputStyle) {
+  if (inputFeature.geometry.type == "Polygon"){
+    if (inputStyle === 'Polygon_A'){
+      document.getElementById("FormStyleOptionItem2").style.display = "none";
+      document.getElementById("FormStyleOptionItem3").style.display = "none";
+    } 
+    if (inputStyle === 'Polygon_B'){ 
+      document.getElementById("FormStyleOptionItem1").style.display = "none";
+      document.getElementById("FormStyleOptionItem3").style.display = "none";
+    } 
+    if (inputStyle === 'Polygon_C'){ 
+      document.getElementById("FormStyleOptionItem1").style.display = "none";
+      document.getElementById("FormStyleOptionItem2").style.display = "none";
+    }
+  }
+  if (inputFeature.geometry.type == "LineString"){
+    if (inputStyle === 'Link_A'){
+      document.getElementById("FormStyleOptionLink2").style.display = "none";
+      document.getElementById("FormStyleOptionLink3").style.display = "none";
+    } 
+    if (inputStyle === 'Link_B'){ 
+      document.getElementById("FormStyleOptionLink1").style.display = "none";
+      document.getElementById("FormStyleOptionLink3").style.display = "none";
+    } 
+    if (inputStyle === 'Link_C'){ 
+      document.getElementById("FormStyleOptionLink1").style.display = "none";
+      document.getElementById("FormStyleOptionLink2").style.display = "none";
+    }
+  }
+  document.getElementById("FormTitleOption").style.display = "block";
+  inputFeature.properties.style = inputStyle
+}
+
+function DrawName() {
+  var divInput = document.querySelector('.divNameInput');
+  var inputValue = divInput.innerHTML;
+  inputFeature.properties.name = inputValue
+  document.getElementById("formButtonSubmitName").style.display = "none";
+  document.getElementById("FormInfoOption").style.display = "block";
+}
+
+function DrawInfo() {
+  var divInput = document.querySelector('.divInfoInput');
+  var inputValue = divInput.innerHTML;
+  inputFeature.properties.info = inputValue
+  document.getElementById("formButtonSubmitInfo").style.display = "none";
+  console.log(inputFeature)
+}
+function DrawReset() {
+  var myForm = document.querySelector('.popupDraw');
+  var originalContent = myForm.innerHTML;
+  myForm.innerHTML = originalContent;
+  document.getElementById("typeOption1").style.display = "block";
+  document.getElementById("typeOption2").style.display = "block";
+  document.getElementById("ScaleOption1").style.display = "none";
+  document.getElementById("ScaleOption2").style.display = "none";
+  document.getElementById("ScaleOption3").style.display = "none";
+  document.getElementById("FormStyleOptionItem1").style.display = "none";
+  document.getElementById("FormStyleOptionItem2").style.display = "none";
+  document.getElementById("FormStyleOptionItem3").style.display = "none";
+  document.getElementById("FormStyleOptionLink1").style.display = "none";
+  document.getElementById("FormStyleOptionLink2").style.display = "none";
+  document.getElementById("FormStyleOptionLink3").style.display = "none";
+  document.getElementById("formButtonSubmitName").style.display = "none";
+  document.getElementById("formButtonSubmitInfo").style.display = "none";
+
 }
 
 function DrawEnd() {
