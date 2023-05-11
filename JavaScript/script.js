@@ -642,7 +642,7 @@ return layers
 
 // CODE
 map.addLayer(graticule);
-
+/*
 var itemIdHash = list2hash(WorkFlowItemList)
 var linkIdHash = list2hash(WorkFlowLinkList)
 
@@ -659,31 +659,60 @@ for (layer of WorkFlowItemLayer) {
 for (layer of WorkFlowLinkLayer) {
   map.addLayer(layer[0]);
 }
-
+*/
 
 
 map.getView().on('change:resolution', (event) => {
   console.log(map.getView().getResolution())
 });
 
+// interation Draw 
+TESTSource = new ol.source.Vector({wrapX: false});
 
-
-// EVENT Listener
-/*
-map.getView().on('change:resolution', (event) => {
- 
-  for(layer of WorkFlowItemLayer){
-    let hiddenLayer = layer[1].hidden
-    let typeFeatureLayer = layer[1].typeFeature
-    console.log(typeFeatureLayer,hiddenLayer)
-    
-    layer[0].setStyle(function(feature, resolution) {
-      return styleFunction({...typeFeatureLayer}, map.getView().getZoom(),{...hiddenLayer});
-      return new ol.style.Style({})
-    })
-  }
+var TESTLayer = new ol.layer.Vector({
+  source: TESTSource,
 });
-*/
+
+map.addLayer(TESTLayer)
+
+let draw; // global so we can remove it later
+function addInteraction() {
+  draw = new ol.interaction.Draw({
+    source: TESTSource,
+    type: 'Point',
+    geometryFunction: function(coordinates, geometry) {
+      let xCoordinates = coordinates[0]
+      let yCoordinates = coordinates[1]
+      const squareSideLength = 1;
+      const squareGeom = new ol.geom.Polygon([
+        [
+          [xCoordinates - 10, yCoordinates - 5],
+          [xCoordinates - 10, yCoordinates + 5],
+          [xCoordinates + 10, yCoordinates + 5],
+          [xCoordinates + 10, yCoordinates - 5],
+        ]
+      ]);
+      return squareGeom;
+    }, 
+    style: function(feature) {
+      return new ol.style.Style({
+        image: new ol.style.RegularShape({
+          fill: new ol.style.Fill({color: 'rgba(255, 255, 255, 0.05)'}),
+          stroke: new ol.style.Stroke({color: 'white', width: 2}),
+          points: 4,
+          radius: 15 * 1/ map.getView().getResolution() / Math.SQRT2,
+          radius2: 15 * 1/ map.getView().getResolution(),
+          scale: [1, 0.5],
+        }),
+      });
+    }
+  });
+  map.addInteraction(draw);
+}
+
+
+
+/*
 var gridSource = new ol.source.Vector({});
 
 // Create a vector layer and set its source to the empty vector source
@@ -738,41 +767,9 @@ var TESTLayer = new ol.layer.Vector({
 map.addLayer(TESTLayer)
 
 
-/*
-let draw; // global so we can remove it later
-function addInteraction() {
-  draw = new ol.interaction.Draw({
-    source: TESTSource,
-    type: 'Point',
-    geometryFunction: function(coordinates, geometry) {
-      let xCoordinates = coordinates[0]
-      let yCoordinates = coordinates[1]
-      const squareSideLength = 1;
-      const squareGeom = new ol.geom.Polygon([
-        [
-          [xCoordinates - 10, yCoordinates - 5],
-          [xCoordinates - 10, yCoordinates + 5],
-          [xCoordinates + 10, yCoordinates + 5],
-          [xCoordinates + 10, yCoordinates - 5],
-        ]
-      ]);
-      return squareGeom;
-    }, 
-    style: function(feature) {
-      return new ol.style.Style({
-        image: new ol.style.RegularShape({
-          fill: new ol.style.Fill({color: 'rgba(255, 255, 255, 0.5)'}),
-          stroke: new ol.style.Stroke({color: 'blue', width: 2}),
-          points: 4,
-          radius: 30,
-          angle: Math.PI / 4,
-        }),
-      });
-    }
-  });
-  map.addInteraction(draw);
-}
-*/
+
+
+
 
 const snap = new ol.interaction.Snap({
   source: gridLayer.getSource(),
@@ -781,6 +778,7 @@ const snap = new ol.interaction.Snap({
 
 
 const select = new ol.interaction.Select({
+
 });
 
 
@@ -807,7 +805,7 @@ map.addInteraction(select);
 map.addInteraction(snap);
 map.addInteraction(modify);
 map.addInteraction(translate);
-
+*/
 
 // FUNCTIONS HTML
 function openPopup() {
@@ -830,10 +828,16 @@ function DrawStart() {
 function DrawFeature(inputType){
   if (inputType === "Actions") {
     document.getElementById("FormScaleOption").style.display = "block";
+    document.getElementById("ScaleOption1").style.display = "block";
+    document.getElementById("ScaleOption2").style.display = "block";
+    document.getElementById("ScaleOption3").style.display = "block";
     document.getElementById("typeOption2").style.display = "none";
     inputFeature = {...EmptyItem}
   } if (inputType === "Connections") {
     document.getElementById("FormScaleOption").style.display = "block";
+    document.getElementById("ScaleOption1").style.display = "block";
+    document.getElementById("ScaleOption2").style.display = "block";
+    document.getElementById("ScaleOption3").style.display = "block";
     document.getElementById("typeOption1").style.display = "none";
     inputFeature = {...Emptylink}
   }
@@ -858,11 +862,18 @@ function DrawScale(inputScale) {
   } 
   if (inputFeature.geometry.type == "Polygon"){
     document.getElementById("FormStyleOptionItem").style.display = "block";
+    document.getElementById("FormStyleOptionItem1").style.display = "block";
+    document.getElementById("FormStyleOptionItem2").style.display = "block";
+    document.getElementById("FormStyleOptionItem3").style.display = "block";
   } 
   if (inputFeature.geometry.type == "LineString"){
     document.getElementById("FormStyleOptionLink").style.display = "block";
+    document.getElementById("FormStyleOptionLink1").style.display = "block";
+    document.getElementById("FormStyleOptionLink2").style.display = "block";
+    document.getElementById("FormStyleOptionLink3").style.display = "block";
   }
 }
+
 function DrawStyle(inputStyle) {
   if (inputFeature.geometry.type == "Polygon"){
     if (inputStyle === 'Polygon_A'){
@@ -893,40 +904,55 @@ function DrawStyle(inputStyle) {
     }
   }
   document.getElementById("FormTitleOption").style.display = "block";
+  document.getElementById("formButtonSubmitName").style.display = "block";
   inputFeature.properties.style = inputStyle
 }
 
 function DrawName() {
-  var divInput = document.querySelector('.divNameInput');
-  var inputValue = divInput.innerHTML;
-  inputFeature.properties.name = inputValue
+  let inputName = document.getElementById("inputName").value;
+  inputFeature.properties.name = inputName
   document.getElementById("formButtonSubmitName").style.display = "none";
   document.getElementById("FormInfoOption").style.display = "block";
+  document.getElementById("formButtonSubmitInfo").style.display = "block";
 }
 
 function DrawInfo() {
-  var divInput = document.querySelector('.divInfoInput');
-  var inputValue = divInput.innerHTML;
-  inputFeature.properties.info = inputValue
+  let inputInfo = document.getElementById("inputInfo").value;
+  inputFeature.properties.info = inputInfo
   document.getElementById("formButtonSubmitInfo").style.display = "none";
   console.log(inputFeature)
 }
+
+function DrawSave() {
+  addInteraction()
+}
+
 function DrawReset() {
-  var myForm = document.querySelector('.popupDraw');
-  var originalContent = myForm.innerHTML;
-  myForm.innerHTML = originalContent;
+  var myForm = document.querySelector('.popupDraw');  
+
+  document.getElementById("DrawForm").reset();
   document.getElementById("typeOption1").style.display = "block";
   document.getElementById("typeOption2").style.display = "block";
+
+  document.getElementById("FormScaleOption").style.display = "none";
   document.getElementById("ScaleOption1").style.display = "none";
   document.getElementById("ScaleOption2").style.display = "none";
   document.getElementById("ScaleOption3").style.display = "none";
+
+  document.getElementById("FormStyleOptionLink").style.display = "none";
   document.getElementById("FormStyleOptionItem1").style.display = "none";
   document.getElementById("FormStyleOptionItem2").style.display = "none";
   document.getElementById("FormStyleOptionItem3").style.display = "none";
+
+  document.getElementById("FormStyleOptionItem").style.display = "none";
   document.getElementById("FormStyleOptionLink1").style.display = "none";
   document.getElementById("FormStyleOptionLink2").style.display = "none";
   document.getElementById("FormStyleOptionLink3").style.display = "none";
+
+  document.getElementById("FormTitleOption").style.display = "none";
   document.getElementById("formButtonSubmitName").style.display = "none";
+
+  document.getElementById("FormInfoOption").style.display = "none";
   document.getElementById("formButtonSubmitInfo").style.display = "none";
 
 }
