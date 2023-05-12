@@ -323,132 +323,132 @@ const WorkFlowLinkList = [
 ]
 
 const WorkFlowItemList = [
-{
-  "type": "Feature",
-  "properties": {
-    "name": 'TEST',
-    "info": 1,
-    "scale": 1,
-    "type": 'Polygon_A',
+  {
+    "type": "Feature",
+    "properties": {
+      "name": 'TEST',
+      "info": 1,
+      "scale": 1,
+      "type": 'Polygon_A',
+    },
+    "geometry": {
+      "coordinates": [
+        [
+          [10, 10],
+          [10, 20],
+          [30, 20],
+          [30, 10],
+        ]
+      ],
+      "type": "Polygon"
+    },
+    "id": 'f20eeb3b-4bb0-4146-bf9f-e9021ee67949'
   },
-  "geometry": {
-    "coordinates": [
-      [
-        [10, 10],
-        [10, 20],
-        [30, 20],
-        [30, 10],
-      ]
-    ],
-    "type": "Polygon"
+  {
+    "type": "Feature",
+    "properties": {
+      "name": 'TEST3',
+      "info": 1,
+      "scale": 1,
+      "type": 'Polygon_A',
+    },
+    "geometry": {
+      "coordinates": [
+        [
+          [50, 30],
+          [50, 40],
+          [70, 40],
+          [70, 30],
+        ]
+      ],
+      "type": "Polygon"
+    },
+    "id": '870d112a-453c-42c9-a879-c99e42daa7c6'
   },
-  "id": 'f20eeb3b-4bb0-4146-bf9f-e9021ee67949'
-},
-{
-  "type": "Feature",
-  "properties": {
-    "name": 'TEST3',
-    "info": 1,
-    "scale": 1,
-    "type": 'Polygon_A',
+  {
+    "type": "Feature",
+    "properties": {
+      "name": 'TEST2',
+      "info": 1,
+      "scale": 1,
+      "type": 'Polygon_A',
+    },
+    "geometry": {
+      "coordinates": [
+        [
+          [50, 10],
+          [50, 20],
+          [70, 20],
+          [70, 10],
+        ]
+      ],
+      "type": "Polygon"
+    },
+    "id": 'c26fab39-fb86-4848-8418-5d885378bb5f'
   },
-  "geometry": {
-    "coordinates": [
-      [
-        [50, 30],
-        [50, 40],
-        [70, 40],
-        [70, 30],
-      ]
-    ],
-    "type": "Polygon"
+  {
+    "type": "Feature",
+    "properties": {
+      "name": 'TEST2',
+      "info": 1,
+      "scale": 1,
+      "type": 'Polygon_B',
+    },
+    "geometry": {
+      "coordinates": [
+        [
+          [90, 10],
+          [90, 20],
+          [110, 20],
+          [110, 10],
+        ]
+      ],
+      "type": "Polygon"
+    },
+    "id": 'asad'
   },
-  "id": '870d112a-453c-42c9-a879-c99e42daa7c6'
-},
-{
-  "type": "Feature",
-  "properties": {
-    "name": 'TEST2',
-    "info": 1,
-    "scale": 1,
-    "type": 'Polygon_A',
+  {
+    "type": "Feature",
+    "properties": {
+      "name": 'STEVE',
+      "info": 1,
+      "scale": 2,
+      "type": 'Polygon_A',
+    },
+    "geometry": {
+      "coordinates": [
+        [
+          [0, 0],
+          [0, 200],
+          [400, 200],
+          [400, 0],
+        ]
+      ],
+      "type": "Polygon"
+    },
+    "id": '45b440fd-828c-405a-972e-383519ff1ddc'
   },
-  "geometry": {
-    "coordinates": [
-      [
-        [50, 10],
-        [50, 20],
-        [70, 20],
-        [70, 10],
-      ]
-    ],
-    "type": "Polygon"
-  },
-  "id": 'c26fab39-fb86-4848-8418-5d885378bb5f'
-},
-{
-  "type": "Feature",
-  "properties": {
-    "name": 'TEST2',
-    "info": 1,
-    "scale": 1,
-    "type": 'Polygon_B',
-  },
-  "geometry": {
-    "coordinates": [
-      [
-        [90, 10],
-        [90, 20],
-        [110, 20],
-        [110, 10],
-      ]
-    ],
-    "type": "Polygon"
-  },
-  "id": 'asad'
-},
-{
-  "type": "Feature",
-  "properties": {
-    "name": 'STEVE',
-    "info": 1,
-    "scale": 2,
-    "type": 'Polygon_A',
-  },
-  "geometry": {
-    "coordinates": [
-      [
-        [0, 0],
-        [0, 200],
-        [400, 200],
-        [400, 0],
-      ]
-    ],
-    "type": "Polygon"
-  },
-  "id": '45b440fd-828c-405a-972e-383519ff1ddc'
-},
-{
-  "type": "Feature",
-  "properties": {
-    "name": 'STEVE',
-    "info": 1,
-    "scale": 2,
-    "type": 'Polygon_B',
-  },
-  "geometry": {
-    "coordinates": [
-      [
-        [500, 0],
-        [500, 200],
-        [900, 200],
-        [900, 0],
-      ]
-    ],
-    "type": "Polygon"
-  },
-  "id": '6b0d8cbe-95d9-4cca-9afb-f2a3787d695f'
-}
+  {
+    "type": "Feature",
+    "properties": {
+      "name": 'STEVE',
+      "info": 1,
+      "scale": 2,
+      "type": 'Polygon_B',
+    },
+    "geometry": {
+      "coordinates": [
+        [
+          [500, 0],
+          [500, 200],
+          [900, 200],
+          [900, 0],
+        ]
+      ],
+      "type": "Polygon"
+    },
+    "id": '6b0d8cbe-95d9-4cca-9afb-f2a3787d695f'
+  }
 ]
 
 const graticule = new ol.layer.Graticule({
@@ -462,6 +462,11 @@ const graticule = new ol.layer.Graticule({
 })
 
 // FUNCTIONS
+function uuidv4() {
+  return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
+    (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16)
+  );
+}
 
 function styleFunction (name, curentZoom, hidden) {
   if (curentZoom < hidden){
@@ -642,7 +647,7 @@ return layers
 
 // CODE
 map.addLayer(graticule);
-/*
+
 var itemIdHash = list2hash(WorkFlowItemList)
 var linkIdHash = list2hash(WorkFlowLinkList)
 
@@ -659,7 +664,7 @@ for (layer of WorkFlowItemLayer) {
 for (layer of WorkFlowLinkLayer) {
   map.addLayer(layer[0]);
 }
-*/
+
 
 
 map.getView().on('change:resolution', (event) => {
@@ -920,11 +925,67 @@ function DrawInfo() {
   let inputInfo = document.getElementById("inputInfo").value;
   inputFeature.properties.info = inputInfo
   document.getElementById("formButtonSubmitInfo").style.display = "none";
-  console.log(inputFeature)
+  document.getElementById("windowButtonSave").style.display = "inline-block";
+
 }
 
-function DrawSave() {
-  addInteraction()
+function DrawDraw() {
+
+  var test =   {
+    "type": "Feature",
+    "properties": {
+      "name": 'TEST',
+      "info": 1,
+      "scale": 1,
+      "type": 'Polygon_A',
+    },
+    "geometry": {
+      "coordinates": [
+        [
+          [10, 10],
+          [10, 20],
+          [30, 20],
+          [30, 10],
+        ]
+      ],
+      "type": "Polygon"
+    },
+    "id": 'f20eeb3b-4bb0-4146-bf9f-e9021ee67949'
+  }
+
+  inputFeature.geometry.coordinates =  [
+    [110, 50],
+    [110, 60],
+    [130, 60],
+    [130, 50],
+  ]
+  inputFeature.id = uuidv4()
+
+  map.getLayers().forEach(function(layer) {
+    layer.getSource().clear();
+  });
+  WorkFlowItemList.push(inputFeature)
+  console.log(inputFeature)
+  console.log(test)
+
+  var itemIdHash = list2hash(WorkFlowItemList)
+  var linkIdHash = list2hash(WorkFlowLinkList)
+
+  var WorkFlowItemDic = list2dic(WorkFlowItemList)
+  var WorkFlowLinkDic = list2dic(WorkFlowLinkList)
+
+  var WorkFlowItemLayer = itemDic2Layer(ScaleParameters, WorkFlowItemDic)
+  var WorkFlowLinkLayer = linkDic2Layer(ScaleParameters, WorkFlowLinkDic, WorkFlowItemList, itemIdHash)
+
+  for (layer of WorkFlowItemLayer) {
+    map.addLayer(layer[0]);
+  }
+
+  for (layer of WorkFlowLinkLayer) {
+    map.addLayer(layer[0]);
+  }
+
+
 }
 
 function DrawReset() {
@@ -954,6 +1015,7 @@ function DrawReset() {
 
   document.getElementById("FormInfoOption").style.display = "none";
   document.getElementById("formButtonSubmitInfo").style.display = "none";
+  document.getElementById("windowButtonSave").style.display = "none";
 
 }
 

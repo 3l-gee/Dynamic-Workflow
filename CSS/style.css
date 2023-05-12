@@ -136,8 +136,8 @@ li{
 }
 
 .windowButtonSave {
+  display: none;
   text-align: right;
-  display: inline-block;
   bottom: 30px;
   right: 30px;
   border: none;
