@@ -21,7 +21,7 @@ const EmptyItem = {
     "name": '',
     "info": '',
     "scale": 0,
-    "style": '',
+    "type": '',
   },
   "geometry": {
     "coordinates": [
@@ -39,7 +39,7 @@ const Emptylink =   {
     "name": '',
     "info": '',
     "scale": 1,
-    "style": '',
+    "type ": '',
     'start' : '',
     'end' : ''
   },
@@ -697,7 +697,15 @@ function addInteraction() {
           [xCoordinates + 10, yCoordinates - 5],
         ]
       ]);
-      return squareGeom;
+      console.log([
+        [
+          [xCoordinates - 10, yCoordinates - 5],
+          [xCoordinates - 10, yCoordinates + 5],
+          [xCoordinates + 10, yCoordinates + 5],
+          [xCoordinates + 10, yCoordinates - 5],
+        ]
+      ])
+      return null;
     }, 
     style: function(feature) {
       return new ol.style.Style({
@@ -910,7 +918,7 @@ function DrawStyle(inputStyle) {
   }
   document.getElementById("FormTitleOption").style.display = "block";
   document.getElementById("formButtonSubmitName").style.display = "block";
-  inputFeature.properties.style = inputStyle
+  inputFeature.properties.type = inputStyle
 }
 
 function DrawName() {
@@ -931,45 +939,26 @@ function DrawInfo() {
 
 function DrawDraw() {
 
-  var test =   {
-    "type": "Feature",
-    "properties": {
-      "name": 'TEST',
-      "info": 1,
-      "scale": 1,
-      "type": 'Polygon_A',
-    },
-    "geometry": {
-      "coordinates": [
-        [
-          [10, 10],
-          [10, 20],
-          [30, 20],
-          [30, 10],
-        ]
-      ],
-      "type": "Polygon"
-    },
-    "id": 'f20eeb3b-4bb0-4146-bf9f-e9021ee67949'
-  }
+  addInteraction() 
 
-  inputFeature.geometry.coordinates =  [
+  inputFeature.geometry.coordinates =  [[
     [110, 50],
     [110, 60],
     [130, 60],
     [130, 50],
-  ]
+  ]]
+
   inputFeature.id = uuidv4()
 
   map.getLayers().forEach(function(layer) {
     layer.getSource().clear();
   });
-  WorkFlowItemList.push(inputFeature)
-  console.log(inputFeature)
-  console.log(test)
 
-  var itemIdHash = list2hash(WorkFlowItemList)
-  var linkIdHash = list2hash(WorkFlowLinkList)
+  WorkFlowItemList.push(inputFeature)
+
+  console.log(inputFeature)
+
+  var itemIdHash = list2hash(WorkFlowItemList)  
 
   var WorkFlowItemDic = list2dic(WorkFlowItemList)
   var WorkFlowLinkDic = list2dic(WorkFlowLinkList)
@@ -984,6 +973,7 @@ function DrawDraw() {
   for (layer of WorkFlowLinkLayer) {
     map.addLayer(layer[0]);
   }
+
 
 
 }
