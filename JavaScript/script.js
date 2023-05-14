@@ -665,9 +665,7 @@ for (layer of WorkFlowLinkLayer) {
   map.addLayer(layer[0]);
 }
 
-
-
-map.getView().on('change:resolution', (event) => {
+map.on('moveend', (event) => {
   console.log(map.getView().getResolution())
 });
 
@@ -680,58 +678,56 @@ var TESTLayer = new ol.layer.Vector({
 
 map.addLayer(TESTLayer)
 
-let draw; // global so we can remove it later
-function addInteraction() {
-  draw = new ol.interaction.Draw({
-    source: TESTSource,
-    type: 'Point',
-    geometryFunction: function(coordinates, geometry) {
-      let xCoordinates = coordinates[0]
-      let yCoordinates = coordinates[1]
-      const squareSideLength = 1;
-      const squareGeom = new ol.geom.Polygon([
-        [
-          [xCoordinates - 10, yCoordinates - 5],
-          [xCoordinates - 10, yCoordinates + 5],
-          [xCoordinates + 10, yCoordinates + 5],
-          [xCoordinates + 10, yCoordinates - 5],
-        ]
-      ]);
-      console.log([
-        [
-          [xCoordinates - 10, yCoordinates - 5],
-          [xCoordinates - 10, yCoordinates + 5],
-          [xCoordinates + 10, yCoordinates + 5],
-          [xCoordinates + 10, yCoordinates - 5],
-        ]
-      ])
-      return null;
-    }, 
-    style: function(feature) {
-      return new ol.style.Style({
-        image: new ol.style.RegularShape({
-          fill: new ol.style.Fill({color: 'rgba(255, 255, 255, 0.05)'}),
-          stroke: new ol.style.Stroke({color: 'white', width: 2}),
-          points: 4,
-          radius: 15 * 1/ map.getView().getResolution() / Math.SQRT2,
-          radius2: 15 * 1/ map.getView().getResolution(),
-          scale: [1, 0.5],
-        }),
-      });
-    }
-  });
-  map.addInteraction(draw);
+var draw = new ol.interaction.Draw({
+  source: TESTSource,
+  type: 'Point',
+  geometryFunction: function(coordinates, geometry) {
+    let xCoordinates = coordinates[0]
+    let yCoordinates = coordinates[1]
+    const squareSideLength = 1;
+    const squareGeom = new ol.geom.Polygon([
+      [
+        [xCoordinates - 10, yCoordinates - 5],
+        [xCoordinates - 10, yCoordinates + 5],
+        [xCoordinates + 10, yCoordinates + 5],
+        [xCoordinates + 10, yCoordinates - 5],
+      ]
+    ]);
+    console.log([
+      [
+        [xCoordinates - 10, yCoordinates - 5],
+        [xCoordinates - 10, yCoordinates + 5],
+        [xCoordinates + 10, yCoordinates + 5],
+        [xCoordinates + 10, yCoordinates - 5],
+      ]
+    ])  
+    return null;
+  }, 
+  style: function(feature) {
+    return new ol.style.Style({
+      image: new ol.style.RegularShape({
+        fill: new ol.style.Fill({color: 'rgba(255, 255, 255, 0.05)'}),
+        stroke: new ol.style.Stroke({color: 'white', width: 2}),
+        points: 4,
+        radius: 15 * 1/ map.getView().getResolution() / Math.SQRT2,
+        radius2: 15 * 1/ map.getView().getResolution(),
+        scale: [1, 0.5],
+      }),
+    });
+  }
+});
+
+function DumpAll() {
+  console.log(WorkFlowItemList)
 }
 
 
-
-/*
 var gridSource = new ol.source.Vector({});
 
 // Create a vector layer and set its source to the empty vector source
 var gridLayer = new ol.layer.Vector({
   source: gridSource,
-  visible: false, // set layer as hidden
+  visible: true, // set layer as hidden
   interact: true, // set layer as interactable
 });
 
@@ -749,23 +745,26 @@ function generatePoints(extent) {
   var minY = extent[1];
   var maxX = extent[2];
   var maxY = extent[3];
-  for (var x = minX; x < maxX; x += Xspacing) {
-    for (var y = minY; y < maxY; y += Yspacing) {
-      var point = new ol.geom.Point([x, y]);
-      points.push(new ol.Feature(point));
-    }
-  }
+  console.log(extent)
+  points.push(
+  new ol.Feature(new ol.geom.Point([minX, minY])),
+  new ol.Feature(new ol.geom.Point([maxX, minY])),
+  new ol.Feature(new ol.geom.Point([minX, maxY])),
+  new ol.Feature(new ol.geom.Point([maxX, maxY]))
+  )
+  points.push(new ol.Feature(new ol.geom.Point([Math.ceil(minX/Xspacing)*Xspacing, Math.ceil(minY/Yspacing)*Yspacing])));
+
+
   return points;
 }
 
 // Create a listener for the "postrender" event of the map
-map.on('postrender', function(event) {
+map.on('moveend', function(event) {
   // Get the current view extent of the map
   var extent = event.frameState.extent;
   // Generate point geometries for the current extent
   var points = generatePoints(extent);
   // Clear the vector source and add the generated points
-  gridSource.clear();
   gridSource.addFeatures(points);
 });
 
@@ -779,17 +778,12 @@ var TESTLayer = new ol.layer.Vector({
 
 map.addLayer(TESTLayer)
 
-
-
-
-
-
 const snap = new ol.interaction.Snap({
   source: gridLayer.getSource(),
   pixelTolerance : 5000
 });
 
-
+/*
 const select = new ol.interaction.Select({
 
 });
@@ -939,42 +933,38 @@ function DrawInfo() {
 
 function DrawDraw() {
 
-  addInteraction() 
+  map.addInteraction(draw);
 
-  inputFeature.geometry.coordinates =  [[
-    [110, 50],
-    [110, 60],
-    [130, 60],
-    [130, 50],
-  ]]
+  map.on('singleclick', handleClick)
+   function handleClick(evt) {
+    map.removeInteraction(draw)
 
-  inputFeature.id = uuidv4()
+    inputFeature.geometry.coordinates =  [
+      [
+        [JSON.parse(JSON.stringify(evt.coordinate[0]))- 10,  JSON.parse(JSON.stringify(evt.coordinate[1])) - 5],
+        [JSON.parse(JSON.stringify(evt.coordinate[0])) - 10, JSON.parse(JSON.stringify(evt.coordinate[1])) + 5],
+        [JSON.parse(JSON.stringify(evt.coordinate[0])) + 10, JSON.parse(JSON.stringify(evt.coordinate[1])) + 5],
+        [JSON.parse(JSON.stringify(evt.coordinate[0])) + 10, JSON.parse(JSON.stringify(evt.coordinate[1])) - 5],
+      ]
+    ] 
+      
+    inputFeature.id = JSON.parse(JSON.stringify(uuidv4()))  
 
-  map.getLayers().forEach(function(layer) {
-    layer.getSource().clear();
-  });
+    map.getLayers().forEach(function(layer) {
+      layer.getSource().clear();
+    });
 
-  WorkFlowItemList.push(inputFeature)
+    WorkFlowItemList.push(JSON.parse(JSON.stringify(inputFeature)))
 
-  console.log(inputFeature)
+    var WorkFlowItemDic = list2dic(WorkFlowItemList)
 
-  var itemIdHash = list2hash(WorkFlowItemList)  
+    var WorkFlowItemLayer = itemDic2Layer(ScaleParameters, WorkFlowItemDic)
 
-  var WorkFlowItemDic = list2dic(WorkFlowItemList)
-  var WorkFlowLinkDic = list2dic(WorkFlowLinkList)
-
-  var WorkFlowItemLayer = itemDic2Layer(ScaleParameters, WorkFlowItemDic)
-  var WorkFlowLinkLayer = linkDic2Layer(ScaleParameters, WorkFlowLinkDic, WorkFlowItemList, itemIdHash)
-
-  for (layer of WorkFlowItemLayer) {
-    map.addLayer(layer[0]);
-  }
-
-  for (layer of WorkFlowLinkLayer) {
-    map.addLayer(layer[0]);
-  }
-
-
+    for (layer of WorkFlowItemLayer) {
+      map.addLayer(layer[0]);
+    }
+    map.un('singleclick', handleClick);
+  }; 
 
 }
 
