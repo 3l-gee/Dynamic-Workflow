@@ -319,6 +319,23 @@ const WorkFlowLinkList = [
       "type": "LineString"
     },
     "id": '9fa3ba5a-b94e-463c-a60c-37042ea657c5'
+  },
+  {
+    "type": "Feature",
+    "properties": {
+      "name": 'LINE 5',
+      "info": 1,
+      "scale": 1,
+      "type": 'Link_A',
+      'start' : 'asad',
+      'end' : 'c26fab39-fb86-4848-8418-5d885378bb5f'
+    },
+    "geometry": {
+      "coordinates": [[0,0]
+      ],
+      "type": "LineString"
+    },
+    "id": '9fa3ba5a-b94e-463c-a60c-34042ea657c5'
   }
 ]
 
@@ -461,6 +478,13 @@ const graticule = new ol.layer.Graticule({
   wrapX: false,
 })
 
+var gridLayer = new ol.layer.Vector({
+  source: new ol.source.Vector({}),
+  visible: true, // set layer as hidden
+  interact: true, // set layer as interactable
+});
+
+
 // FUNCTIONS
 function uuidv4() {
   return ([1e7]+-1e3+-4e3+-8e3+-1e11).replace(/[018]/g, c =>
@@ -475,7 +499,7 @@ function styleFunction (name, curentZoom, hidden) {
   return FeatureStylesActive[name];
 };
 
-function line2OrthoLine(start, end, scale) {
+function line2OrthoLine(start, end, coordinates, scale) {
   let list = []
 
   start2 = start[0][2]
@@ -488,10 +512,14 @@ function line2OrthoLine(start, end, scale) {
 
   dx = endMid[0] - startMid[0]
   dy = endMid[1] - startMid[1]
+
+
   
   //Cases : [DX+ DY+/-, DX- DY+/-, DX- DY+, DX- DY+
   list.push([startMid[0],     startMid[1]])
   list.push([startMid[0] + 4*scale.textMult, startMid[1]])
+
+  console.log(list[0], coordinates, list[1])
 
   if (dx > 0 && dy > 0){
     list.push([startMid[0] + dx/2,  startMid[1]])
@@ -565,8 +593,9 @@ function linkDic2Layer(Scale, linkDic, itemList, itemHash){
         for (item of linkDic[scale][type]){
           let start = itemList[itemHash[item.properties.start]].geometry.coordinates
           let end = itemList[itemHash[item.properties.end]].geometry.coordinates
+          let coordinates = item.geometry.coordinates 
 
-          pointList = line2OrthoLine(start, end, Scale[scale])
+          pointList = line2OrthoLine(start, end, coordinates, Scale[scale])
           
           item.geometry.coordinates = pointList
 
@@ -721,43 +750,38 @@ function DumpAll() {
   console.log(WorkFlowItemList)
 }
 
+function SnapGridInteration(bool, Xspacing, Yspacing) {
+  if (bool) {
+    map.addInteraction(snap)
+    var extent = map.getView().calculateExtent();
+    // Generate point geometries for the current extent
+    var points = [];
+    var minX = Math.ceil(extent[0]/Xspacing)*Xspacing;
+    var minY = Math.ceil(extent[1]/Yspacing)*Yspacing;
+    var maxX = Math.floor(extent[2]/Xspacing)*Xspacing;
+    var maxY = Math.floor(extent[3]/Yspacing)*Yspacing;
+  
+    for (let x = 0; x < (maxX - minX); x += Xspacing) {
+      for (let y = 0; y < (maxY - minY); y += Yspacing){
+        points.push(new ol.Feature(new ol.geom.Point([minX + x, minY + y])))
+        
+      } 
+    }
 
-var gridSource = new ol.source.Vector({});
+    gridLayer.getSource().addFeatures(points);
 
-// Create a vector layer and set its source to the empty vector source
-var gridLayer = new ol.layer.Vector({
-  source: gridSource,
-  visible: true, // set layer as hidden
-  interact: true, // set layer as interactable
-});
+    map.addLayer(gridLayer)
+  }
 
-// Add the vector layer to the map
-map.addLayer(gridLayer);
+  else {
+    map.removeInteraction(snap)
+    gridLayer.getSource().clear()
+  }
 
-// Define the grid spacing
-var Xspacing = 40;
-var Yspacing = 20;
-
-// Create a function that generates point geometries for a given extent
-function generatePoints(extent) {
-  var points = [];
-  var minX = extent[0];
-  var minY = extent[1];
-  var maxX = extent[2];
-  var maxY = extent[3];
-  console.log(extent)
-  points.push(
-  new ol.Feature(new ol.geom.Point([minX, minY])),
-  new ol.Feature(new ol.geom.Point([maxX, minY])),
-  new ol.Feature(new ol.geom.Point([minX, maxY])),
-  new ol.Feature(new ol.geom.Point([maxX, maxY]))
-  )
-  points.push(new ol.Feature(new ol.geom.Point([Math.ceil(minX/Xspacing)*Xspacing, Math.ceil(minY/Yspacing)*Yspacing])));
-
-
-  return points;
 }
 
+
+/*
 // Create a listener for the "postrender" event of the map
 map.on('moveend', function(event) {
   // Get the current view extent of the map
@@ -765,9 +789,11 @@ map.on('moveend', function(event) {
   // Generate point geometries for the current extent
   var points = generatePoints(extent);
   // Clear the vector source and add the generated points
-  gridSource.addFeatures(points);
-});
+  gridLayer.getSource().addFeatures(points);
 
+  map.addLayer(gridLayer);
+});
+*/
 
 TESTSource = new ol.source.Vector({wrapX: false});
 
@@ -782,6 +808,8 @@ const snap = new ol.interaction.Snap({
   source: gridLayer.getSource(),
   pixelTolerance : 5000
 });
+
+
 
 /*
 const select = new ol.interaction.Select({
@@ -807,12 +835,11 @@ const translate = new ol.interaction.Translate({
   features: select.getFeatures(),
 });
 
-
-map.addInteraction(select);
-map.addInteraction(snap);
-map.addInteraction(modify);
-map.addInteraction(translate);
 */
+//map.addInteraction(select);
+
+//map.addInteraction(modify);
+//  map.addInteraction(translate);
 
 // FUNCTIONS HTML
 function openPopup() {
@@ -931,20 +958,30 @@ function DrawInfo() {
 
 }
 
+function DrawTEST() {
+
+}
+
 function DrawDraw() {
 
+  var Xspacing = 40
+  var Yspacing = 20
+
   map.addInteraction(draw);
+  SnapGridInteration(true, Xspacing, Yspacing)  
 
   map.on('singleclick', handleClick)
    function handleClick(evt) {
     map.removeInteraction(draw)
+    SnapGridInteration(false, 1000 , 10000)  
+    SnapGridInteration(true, Xspacing, Yspacing)  
 
     inputFeature.geometry.coordinates =  [
       [
-        [JSON.parse(JSON.stringify(evt.coordinate[0]))- 10,  JSON.parse(JSON.stringify(evt.coordinate[1])) - 5],
-        [JSON.parse(JSON.stringify(evt.coordinate[0])) - 10, JSON.parse(JSON.stringify(evt.coordinate[1])) + 5],
-        [JSON.parse(JSON.stringify(evt.coordinate[0])) + 10, JSON.parse(JSON.stringify(evt.coordinate[1])) + 5],
-        [JSON.parse(JSON.stringify(evt.coordinate[0])) + 10, JSON.parse(JSON.stringify(evt.coordinate[1])) - 5],
+        [JSON.parse(JSON.stringify(Math.round(evt.coordinate[0]/Xspacing)*Xspacing))- 10,  JSON.parse(JSON.stringify(Math.round(evt.coordinate[1]/Yspacing)*Yspacing)) - 5],
+        [JSON.parse(JSON.stringify(Math.round(evt.coordinate[0]/Xspacing)*Xspacing)) - 10, JSON.parse(JSON.stringify(Math.round(evt.coordinate[1]/Yspacing)*Yspacing)) + 5],
+        [JSON.parse(JSON.stringify(Math.round(evt.coordinate[0]/Xspacing)*Xspacing)) + 10, JSON.parse(JSON.stringify(Math.round(evt.coordinate[1]/Yspacing)*Yspacing)) + 5],
+        [JSON.parse(JSON.stringify(Math.round(evt.coordinate[0]/Xspacing)*Xspacing)) + 10, JSON.parse(JSON.stringify(Math.round(evt.coordinate[1]/Yspacing)*Yspacing)) - 5],
       ]
     ] 
       
@@ -956,11 +993,20 @@ function DrawDraw() {
 
     WorkFlowItemList.push(JSON.parse(JSON.stringify(inputFeature)))
 
+    var itemIdHash = list2hash(WorkFlowItemList)
+    var linkIdHash = list2hash(WorkFlowLinkList)
+    
     var WorkFlowItemDic = list2dic(WorkFlowItemList)
-
+    var WorkFlowLinkDic = list2dic(WorkFlowLinkList)
+    
     var WorkFlowItemLayer = itemDic2Layer(ScaleParameters, WorkFlowItemDic)
-
+    var WorkFlowLinkLayer = linkDic2Layer(ScaleParameters, WorkFlowLinkDic, WorkFlowItemList, itemIdHash)
+    
     for (layer of WorkFlowItemLayer) {
+      map.addLayer(layer[0]);
+    }
+    
+    for (layer of WorkFlowLinkLayer) {
       map.addLayer(layer[0]);
     }
     map.un('singleclick', handleClick);
